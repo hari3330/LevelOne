@@ -1,4 +1,4 @@
-// ARISE — localStorage persistence
+// LevelOne — localStorage persistence
 // A single storage key holds the entire AppData object as JSON. This keeps reads/writes
 // atomic and simple, and makes export/import trivial (it's the same shape as the file on disk).
 
@@ -19,6 +19,9 @@ export function loadData(): AppData {
       workoutLogs: parsed.workoutLogs ?? {},
       checklists: parsed.checklists ?? {},
       habits: parsed.habits ?? [],
+      foodEntries: parsed.foodEntries ?? [],
+      waterLogs: parsed.waterLogs ?? {},
+      waterGoalMl: parsed.waterGoalMl ?? 2000,
     };
   } catch {
     return emptyAppData();
@@ -62,5 +65,8 @@ export function parseImportedData(text: string): AppData {
     workoutLogs: typeof parsed.workoutLogs === 'object' ? parsed.workoutLogs : {},
     checklists: typeof parsed.checklists === 'object' ? parsed.checklists : {},
     habits: Array.isArray(parsed.habits) ? parsed.habits : [],
+    foodEntries: Array.isArray(parsed.foodEntries) ? parsed.foodEntries : [],
+    waterLogs: typeof parsed.waterLogs === 'object' ? parsed.waterLogs : {},
+    waterGoalMl: typeof parsed.waterGoalMl === 'number' ? parsed.waterGoalMl : 2000,
   };
 }

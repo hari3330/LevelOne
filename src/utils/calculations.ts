@@ -1,4 +1,4 @@
-// ARISE — derived calculations
+// LevelOne — derived calculations
 // Pure functions only: given data in, a value out. Keeps components simple and testable.
 
 import { AppData, DailyChecklist, Profile, WeightLog } from '../types';
@@ -159,5 +159,8 @@ export function emptyAppData(): AppData {
     workoutLogs: {},
     checklists: {},
     habits: [],
+    foodEntries: [],
+    waterLogs: {},
+    waterGoalMl: 2000,
   };
 }

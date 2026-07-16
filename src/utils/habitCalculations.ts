@@ -1,4 +1,4 @@
-// ARISE — Discipline page calculations
+// LevelOne — Discipline page calculations
 // Kept separate from utils/calculations.ts so the existing dashboard/progress logic
 // is never touched while extending the app with habit tracking.
 

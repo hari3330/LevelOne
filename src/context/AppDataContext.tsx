@@ -1,12 +1,24 @@
-// ARISE — global app data context
+// LevelOne — global app data context
 // Single source of truth for the app's persisted state. Every mutation goes through here so
 // that localStorage and in-memory React state never drift apart.
 
 import React, { createContext, useContext, useMemo, useState } from 'react';
-import { AppData, DailyChecklist, Habit, Profile, WeightLog, WorkoutLog, EMPTY_CHECKLIST } from '../types';
+import {
+  AppData,
+  DailyChecklist,
+  FoodEntry,
+  FoodUnit,
+  Habit,
+  MealType,
+  Profile,
+  WeightLog,
+  WorkoutLog,
+  EMPTY_CHECKLIST,
+} from '../types';
 import { loadData, saveData, clearData } from '../utils/storage';
 import { todayISO } from '../utils/dateUtils';
 import { calcCurrentStreak, generateHabitId } from '../utils/habitCalculations';
+import { generateFoodEntryId, scaleNutrition } from '../utils/nutritionCalculations';
 
 interface AppDataContextValue {
   data: AppData;
@@ -29,6 +41,24 @@ interface AppDataContextValue {
   updateHabit: (id: string, partial: { name: string; quitDate: string; notes: string }) => void;
   deleteHabit: (id: string) => void;
   relapseHabit: (id: string) => void;
+
+  // --- Nutrition (added; does not affect any existing behavior) ---
+  addFoodEntry: (input: {
+    mealType: MealType;
+    foodName: string;
+    brand?: string;
+    quantity: number;
+    unit: FoodUnit;
+    caloriesPer100: number;
+    proteinPer100: number;
+    carbsPer100: number;
+    fatPer100: number;
+    date?: string;
+  }) => void;
+  updateFoodEntry: (id: string, partial: { quantity: number; unit: FoodUnit; mealType: MealType }) => void;
+  deleteFoodEntry: (id: string) => void;
+  addWater: (deltaMl: number, date?: string) => void;
+  setWaterGoal: (ml: number) => void;
 }
 
 const AppDataContext = createContext<AppDataContextValue | undefined>(undefined);
@@ -139,6 +169,50 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
           };
         });
         update({ ...data, habits });
+      },
+
+      // --- Nutrition ---
+
+      addFoodEntry({ mealType, foodName, brand, quantity, unit, caloriesPer100, proteinPer100, carbsPer100, fatPer100, date = todayISO() }) {
+        const totals = scaleNutrition({ caloriesPer100, proteinPer100, carbsPer100, fatPer100 }, quantity, unit);
+        const entry: FoodEntry = {
+          id: generateFoodEntryId(),
+          date,
+          mealType,
+          foodName,
+          brand,
+          quantity,
+          unit,
+          caloriesPer100,
+          proteinPer100,
+          carbsPer100,
+          fatPer100,
+          ...totals,
+        };
+        update({ ...data, foodEntries: [...data.foodEntries, entry] });
+      },
+
+      updateFoodEntry(id, { quantity, unit, mealType }) {
+        const foodEntries = data.foodEntries.map((f) => {
+          if (f.id !== id) return f;
+          const totals = scaleNutrition(f, quantity, unit);
+          return { ...f, quantity, unit, mealType, ...totals };
+        });
+        update({ ...data, foodEntries });
+      },
+
+      deleteFoodEntry(id) {
+        update({ ...data, foodEntries: data.foodEntries.filter((f) => f.id !== id) });
+      },
+
+      addWater(deltaMl, date = todayISO()) {
+        const current = data.waterLogs[date] ?? 0;
+        const next = Math.max(current + deltaMl, 0);
+        update({ ...data, waterLogs: { ...data.waterLogs, [date]: next } });
+      },
+
+      setWaterGoal(ml) {
+        update({ ...data, waterGoalMl: ml });
       },
     }),
     [data]

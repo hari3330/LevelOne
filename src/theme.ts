@@ -1,4 +1,4 @@
-// ARISE — Material Design 3 theme
+// LevelOne — Material Design 3 theme
 // Built on MUI's theming API, tuned to feel like an M3 / modern Google surface:
 // large rounded cards, soft elevation, generous touch targets, calm neutral background.
 

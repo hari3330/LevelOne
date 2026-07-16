@@ -1,4 +1,4 @@
-// ARISE — core data model
+// LevelOne — core data model
 // Everything the app persists to localStorage is described here.
 
 export type WorkoutType =
@@ -71,6 +71,10 @@ export interface AppData {
   workoutLogs: Record<string, WorkoutLog>;
   checklists: Record<string, DailyChecklist>;
   habits: Habit[];
+  foodEntries: FoodEntry[];
+  /** ISO date -> milliliters of water logged that day. */
+  waterLogs: Record<string, number>;
+  waterGoalMl: number;
 }
 
 /** A habit the user is trying to quit, tracked on the Discipline page. */
@@ -98,3 +102,42 @@ export const CHECKLIST_META: {
   { key: 'water', label: 'Water Goal', description: 'Drink enough water for the day' },
   { key: 'sleep', label: 'Sleep Goal', description: 'Get a full night of restful sleep' },
 ];
+
+// --- Nutrition (Nutrition page) ---
+
+export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snacks';
+
+export const MEAL_TYPES: MealType[] = ['breakfast', 'lunch', 'dinner', 'snacks'];
+
+export const MEAL_LABELS: Record<MealType, string> = {
+  breakfast: 'Breakfast',
+  lunch: 'Lunch',
+  dinner: 'Dinner',
+  snacks: 'Snacks',
+};
+
+export type FoodUnit = 'g' | 'ml' | 'serving';
+
+/**
+ * One logged food entry. Stores both the per-100g/ml/serving baseline nutrition
+ * (so quantity edits can be rescaled without re-searching) and the totals computed
+ * for the logged quantity at save time.
+ */
+export interface FoodEntry {
+  id: string;
+  date: string; // ISO date this entry was logged for
+  mealType: MealType;
+  foodName: string;
+  brand?: string;
+  quantity: number;
+  unit: FoodUnit;
+  caloriesPer100: number;
+  proteinPer100: number;
+  carbsPer100: number;
+  fatPer100: number;
+  // Totals for this entry's quantity — what's displayed and summed into daily totals.
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+}

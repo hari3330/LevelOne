@@ -1,4 +1,4 @@
-// ARISE — date helpers
+// LevelOne — date helpers
 // All dates in the app are stored as ISO strings "YYYY-MM-DD" (local calendar day, no time).
 
 /** Returns today's date as an ISO "YYYY-MM-DD" string, in local time. */

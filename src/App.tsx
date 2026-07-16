@@ -7,6 +7,7 @@ import SpaceDashboardRoundedIcon from '@mui/icons-material/SpaceDashboardRounded
 import FitnessCenterRoundedIcon from '@mui/icons-material/FitnessCenterRounded';
 import TimelineRoundedIcon from '@mui/icons-material/TimelineRounded';
 import SelfImprovementRoundedIcon from '@mui/icons-material/SelfImprovementRounded';
+import RestaurantRoundedIcon from '@mui/icons-material/RestaurantRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -16,9 +17,10 @@ import Dashboard from './pages/Dashboard';
 import Workout from './pages/Workout';
 import Progress from './pages/Progress';
 import Discipline from './pages/Discipline';
+import Nutrition from './pages/Nutrition';
 import Settings from './pages/Settings';
 
-type Tab = 'dashboard' | 'workout' | 'progress' | 'discipline' | 'settings';
+type Tab = 'dashboard' | 'workout' | 'progress' | 'discipline' | 'nutrition' | 'settings';
 
 export default function App() {
   const { data } = useAppData();
@@ -34,6 +36,7 @@ export default function App() {
     workout: <Workout />,
     progress: <Progress />,
     discipline: <Discipline />,
+    nutrition: <Nutrition />,
     settings: <Settings />,
   };
 
@@ -84,11 +87,12 @@ export default function App() {
           zIndex: 10,
         }}
       >
-        <Box sx={{ maxWidth: 560, mx: 'auto' }}>
+        <Box sx={{ maxWidth: 560, mx: 'auto', overflowX: 'auto' }}>
           <BottomNavigation
             value={tab}
             onChange={(_, value: Tab) => setTab(value)}
             showLabels
+            sx={{ minWidth: 420 }}
           >
             <BottomNavigationAction
               label="Dashboard"
@@ -109,6 +113,11 @@ export default function App() {
               label="Discipline"
               value="discipline"
               icon={<SelfImprovementRoundedIcon />}
+            />
+            <BottomNavigationAction
+              label="Nutrition"
+              value="nutrition"
+              icon={<RestaurantRoundedIcon />}
             />
             <BottomNavigationAction
               label="Settings"

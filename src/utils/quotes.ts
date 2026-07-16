@@ -1,4 +1,4 @@
-// ARISE — Discipline page motivational quotes
+// LevelOne — Discipline page motivational quotes
 // One quote is shown per day, deterministically chosen from the date so it never
 // changes on refresh but rotates automatically at midnight.
 
